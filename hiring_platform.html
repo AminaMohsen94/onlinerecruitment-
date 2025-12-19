@@ -67,6 +67,12 @@
       margin-right: 8px;
     }
 
+    input {
+      padding: 8px;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
     /* Modal */
     .modal {
       display: none;
@@ -82,12 +88,6 @@
       padding: 20px;
       border-radius: 6px;
       position: relative;
-    }
-
-    .modal-content input {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 10px;
     }
 
     .close {
@@ -116,6 +116,10 @@
 
     <section>
       <h2>Open Roles</h2>
+
+      <!-- Search -->
+      <input id="searchInput" placeholder="Search jobs..." onkeyup="searchJobs()" />
+
       <div id="jobs">Loading jobs...</div>
     </section>
 
@@ -148,28 +152,46 @@
 
 <script>
 let jobsData = [];
+let filteredJobs = [];
 let selectedJobId = null;
 
 async function loadJobs() {
   const res = await fetch('http://127.0.0.1:5000/api/jobs');
   jobsData = await res.json();
-  renderJobs();
+  filteredJobs = jobsData;
+  renderJobs(filteredJobs);
 }
 
-function renderJobs() {
+function renderJobs(jobs) {
   const container = document.getElementById('jobs');
   container.innerHTML = '';
 
-  jobsData.forEach(j => {
+  if (jobs.length === 0) {
+    container.innerHTML = '<p>No jobs found</p>';
+    return;
+  }
+
+  jobs.forEach(j => {
     container.innerHTML += `
       <div class="card">
         <div class="job-title">${j.title}</div>
         <p>${j.description}</p>
+        <small>${j.city} • ${j.type}</small><br><br>
         <button class="btn-view" onclick="openModal(${j.id})">View</button>
         <button class="btn-apply" onclick="openModal(${j.id})">Apply</button>
       </div>
     `;
   });
+}
+
+function searchJobs() {
+  const q = searchInput.value.toLowerCase();
+  filteredJobs = jobsData.filter(j =>
+    j.title.toLowerCase().includes(q) ||
+    j.city.toLowerCase().includes(q) ||
+    j.type.toLowerCase().includes(q)
+  );
+  renderJobs(filteredJobs);
 }
 
 function openModal(id) {
@@ -212,3 +234,4 @@ loadJobs();
 
 </body>
 </html>
+
