@@ -1,141 +1,214 @@
-import React from 'react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>HireFlow</title>
 
-export default function HireFlowApp() {
-  return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-      <header className="bg-white shadow-sm">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-semibold">HireFlow</h1>
-          <nav className="space-x-4 text-sm">
-            <a href="#/jobs" className="hover:underline">Jobs</a>
-            <a href="#/dashboard" className="hover:underline">Dashboard</a>
-            <a href="#/profile" className="hover:underline">Profile</a>
-          </nav>
-        </div>
-      </header>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f8fafc;
+      color: #0f172a;
+    }
 
-      <main className="max-w-6xl mx-auto p-6">
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="col-span-2">
-            <JobList />
-          </div>
-          <aside className="col-span-1 bg-white p-4 rounded-md shadow-sm">
-            <h3 className="font-semibold mb-3">Saved Searches</h3>
-            <ul className="space-y-2 text-sm">
-              <li className="text-slate-600">Data Scientist - Remote</li>
-              <li className="text-slate-600">Frontend Engineer - Cairo</li>
-            </ul>
-          </aside>
-        </section>
-      </main>
+    header {
+      background: white;
+      padding: 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,.1);
+    }
 
-      <footer className="mt-8 p-4 text-center text-sm text-slate-600">© HireFlow</footer>
-    </div>
-  );
-}
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 20px;
+    }
 
-function JobList() {
-  const jobs = [
-    { id: 1, title: 'Frontend Engineer', company: 'Acme', location: 'Cairo, Egypt', summary: 'React, TypeScript' },
-    { id: 2, title: 'Backend Engineer', company: 'Beta', location: 'Remote', summary: 'Node, Postgres' },
-  ];
+    nav a {
+      margin-left: 15px;
+      text-decoration: none;
+      color: #0f172a;
+    }
 
-  return (
-    <div>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-bold">Open Roles</h2>
-        <div className="flex items-center gap-2">
-          <input className="border rounded px-3 py-2 text-sm" placeholder="Search jobs" aria-label="Search jobs" />
-          <button className="px-3 py-2 bg-sky-600 text-white rounded text-sm">Filter</button>
-        </div>
-      </div>
+    .grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 20px;
+    }
 
-      <ul className="space-y-4">
-        {jobs.map((j) => (
-          <li key={j.id} className="bg-white p-4 rounded shadow-sm">
-            <a href={`#/jobs/${j.id}`} className="block">
-              <h3 className="font-semibold text-lg">{j.title}</h3>
-              <p className="text-sm text-slate-600">{j.company} • {j.location}</p>
-              <p className="mt-2 text-sm">{j.summary}</p>
-            </a>
-            <div className="mt-3 flex gap-2">
-              <a href={`#/jobs/${j.id}`} className="px-3 py-2 border rounded text-sm">View</a>
-              <a href={`#/apply/quick/${j.id}`} className="px-3 py-2 bg-green-600 text-white rounded text-sm">Quick Apply</a>
-            </div>
-          </li>
-        ))}
+    .card {
+      background: white;
+      padding: 16px;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,.1);
+      margin-bottom: 15px;
+    }
+
+    .job-title {
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    button {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn-apply {
+      background: #16a34a;
+      color: white;
+    }
+
+    .btn-view {
+      border: 1px solid #cbd5e1;
+      background: white;
+      margin-right: 8px;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.5);
+    }
+
+    .modal-content {
+      background: white;
+      max-width: 500px;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 6px;
+      position: relative;
+    }
+
+    .modal-content input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+    }
+
+    .close {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="container" style="display:flex;justify-content:space-between">
+    <h2>HireFlow</h2>
+    <nav>
+      <a href="#">Jobs</a>
+      <a href="#">Dashboard</a>
+    </nav>
+  </div>
+</header>
+
+<main class="container">
+  <div class="grid">
+
+    <section>
+      <h2>Open Roles</h2>
+      <div id="jobs">Loading jobs...</div>
+    </section>
+
+    <aside class="card">
+      <h3>Saved Searches</h3>
+      <ul>
+        <li>Frontend Engineer - Cairo</li>
+        <li>Backend Engineer - Remote</li>
       </ul>
-    </div>
-  );
+    </aside>
+
+  </div>
+</main>
+
+<footer style="text-align:center;padding:16px">© HireFlow</footer>
+
+<!-- Modal -->
+<div id="jobModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">✖</span>
+    <h3 id="modalTitle"></h3>
+    <p id="modalDescription"></p>
+
+    <input id="nameInput" placeholder="Your name" />
+    <input id="emailInput" placeholder="Your email" />
+
+    <button class="btn-apply" onclick="applyJob()">Apply</button>
+  </div>
+</div>
+
+<script>
+let jobsData = [];
+let selectedJobId = null;
+
+async function loadJobs() {
+  const res = await fetch('http://127.0.0.1:5000/api/jobs');
+  jobsData = await res.json();
+  renderJobs();
 }
 
-export function JobDetail({ id }) {
-  const job = {
-    title: 'Frontend Engineer',
-    company: 'Acme',
-    location: 'Cairo, Egypt',
-    responsibilities: ['Build UI', 'Work with designers'],
-    specs: ['3+ years React', 'TypeScript'],
-  };
+function renderJobs() {
+  const container = document.getElementById('jobs');
+  container.innerHTML = '';
 
-  return (
-    <div className="bg-white p-6 rounded shadow-sm">
-      <h2 className="text-2xl font-bold">{job.title}</h2>
-      <p className="text-sm text-slate-600">{job.company} • {job.location}</p>
-
-      <section className="mt-4">
-        <h3 className="font-semibold">Responsibilities</h3>
-        <ul className="list-disc pl-6 mt-2">
-          {job.responsibilities.map((r, i) => <li key={i}>{r}</li>)}
-        </ul>
-      </section>
-
-      <section className="mt-4">
-        <h3 className="font-semibold">Requirements</h3>
-        <ul className="list-disc pl-6 mt-2">
-          {job.specs.map((s, i) => <li key={i}>{s}</li>)}
-        </ul>
-      </section>
-
-      <div className="mt-6 flex gap-3">
-        <a href={`#/apply/full/${id}`} className="px-4 py-2 bg-sky-600 text-white rounded">Apply</a>
-        <a href={`#/apply/quick/${id}`} className="px-4 py-2 border rounded">Quick Apply</a>
+  jobsData.forEach(j => {
+    container.innerHTML += `
+      <div class="card">
+        <div class="job-title">${j.title}</div>
+        <p>${j.description}</p>
+        <button class="btn-view" onclick="openModal(${j.id})">View</button>
+        <button class="btn-apply" onclick="openModal(${j.id})">Apply</button>
       </div>
-    </div>
-  );
+    `;
+  });
 }
 
-export function QuickApply({ jobId }) {
-  return (
-    <div className="bg-white p-6 rounded shadow-sm max-w-2xl">
-      <h3 className="font-semibold">Quick Apply</h3>
-      <p className="text-sm text-slate-600 mt-1">Apply with LinkedIn or upload resume</p>
-
-      <div className="mt-4 space-y-3">
-        <button className="w-full px-4 py-2 border rounded">Connect LinkedIn</button>
-        <label className="block">
-          <span className="sr-only">Upload resume</span>
-          <input type="file" accept="application/pdf,application/msword" />
-        </label>
-        <button className="px-4 py-2 bg-green-600 text-white rounded">Submit</button>
-      </div>
-    </div>
-  );
+function openModal(id) {
+  const job = jobsData.find(j => j.id === id);
+  selectedJobId = id;
+  modalTitle.innerText = job.title;
+  modalDescription.innerText = job.description;
+  jobModal.style.display = 'block';
 }
 
-export function RecruiterDashboard() {
-  return (
-    <div className="bg-white p-6 rounded shadow-sm">
-      <h2 className="text-xl font-bold">Recruiter Dashboard</h2>
-
-      <section className="mt-6">
-        <h3 className="font-semibold">Pipeline (Kanban)</h3>
-        <div className="mt-3 grid grid-cols-3 gap-4">
-          <div className="p-3 border rounded">Applied</div>
-          <div className="p-3 border rounded">Phone Screen</div>
-          <div className="p-3 border rounded">Interview</div>
-        </div>
-      </section>
-    </div>
-  );
+function closeModal() {
+  jobModal.style.display = 'none';
 }
+
+async function applyJob() {
+  const name = nameInput.value;
+  const email = emailInput.value;
+
+  if (!name || !email) {
+    alert('Fill all fields');
+    return;
+  }
+
+  await fetch('http://127.0.0.1:5000/api/apply', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      name,
+      email,
+      job_id: selectedJobId
+    })
+  });
+
+  alert('Application sent');
+  closeModal();
+}
+
+loadJobs();
+</script>
+
+</body>
+</html>
