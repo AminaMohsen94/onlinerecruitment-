@@ -3,26 +3,22 @@ from flask_cors import CORS
 import smtplib
 from email.message import EmailMessage
 
-from models import db, Job, Application   # ✅ import models
+from models import db, Job, Application
 
-# =====================
-# App config
-# =====================
+
 app = Flask(__name__)
 CORS(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///recruitment.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db.init_app(app)   # ✅ init db with app
+db.init_app(app)
 
-# =====================
-# Email config
-# =====================
+
 SMTP_SERVER = "smtp.gmail.com"
 SMTP_PORT = 587
-EMAIL_SENDER = "your_email@gmail.com"      # غيريها
-EMAIL_PASSWORD = "your_app_password"       # App Password
+EMAIL_SENDER = "your_email@gmail.com"       
+EMAIL_PASSWORD = "your_app_password"         
 RECRUITER_EMAIL = "recruiter@gmail.com"
 
 def send_email(to, subject, body):
@@ -37,34 +33,29 @@ def send_email(to, subject, body):
         server.login(EMAIL_SENDER, EMAIL_PASSWORD)
         server.send_message(msg)
 
-# =====================
-# Create DB + Sample Data
-# =====================
 with app.app_context():
     db.create_all()
 
     if Job.query.count() == 0:
         db.session.add_all([
             Job(
-                title='Frontend Engineer',
-                description='React, TypeScript',
-                city='Cairo',
-                job_type='Full-time'
+                title="Frontend Engineer",
+                description="React, TypeScript",
+                city="Cairo",
+                job_type="Full-time"
             ),
             Job(
-                title='Backend Engineer',
-                description='Node, Postgres',
-                city='Remote',
-                job_type='Part-time'
+                title="Backend Engineer",
+                description="Node, Postgres",
+                city="Remote",
+                job_type="Part-time"
             )
         ])
         db.session.commit()
 
-# =====================
-# API Routes
-# =====================
 
-@app.route('/api/jobs', methods=['GET'])
+
+@app.route("/api/jobs", methods=["GET"])
 def get_jobs():
     jobs = Job.query.all()
     return jsonify([
@@ -78,7 +69,8 @@ def get_jobs():
         for j in jobs
     ])
 
-@app.route('/api/apply', methods=['POST'])
+
+@app.route("/api/apply", methods=["POST"])
 def apply_job():
     data = request.get_json()
 
@@ -105,14 +97,11 @@ def apply_job():
     db.session.add(application)
     db.session.commit()
 
-    # =====================
-    # Notifications
-    # =====================
-
+   
     send_email(
         email,
         "Application Received",
-        f"Hi {name},\n\nYour application for {job.title} was received."
+        f"Hi {name},\n\nYour application for {job.title} was received successfully."
     )
 
     send_email(
@@ -123,10 +112,6 @@ def apply_job():
 
     return jsonify({"message": "Application submitted successfully"}), 201
 
-# =====================
-# Run App
-# =====================
 if __name__ == "__main__":
     app.run(debug=True)
-
 
