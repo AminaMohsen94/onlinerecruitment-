@@ -7,8 +7,14 @@
         {
             "type": "chrome",
             "request": "launch",
-            "name": "Open hiring_platform.html",
-            "file": "d:\\Users\\roaya\\Desktop\\OnlineRecruitment\\hiring_platform.html"
+            "name": "Open index.html",
+            "file": "d:\\Users\\roaya\\Desktop\\OnlineRecruitment\\index.html",
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Open recruiter_dashboard.html in Chrome",
+            "file": "d:\\Users\\roaya\\Desktop\\OnlineRecruitment\\templates\\recruiter_dashboard.html"
         }
     ]
 }

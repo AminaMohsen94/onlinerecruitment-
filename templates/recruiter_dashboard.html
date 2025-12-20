@@ -1,0 +1,128 @@
+<!-- recruiter_dashboard.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Recruiter Dashboard - HireFlow</title>
+<style>
+body { margin:0; font-family: Arial,sans-serif; background:#f8fafc; color:#0f172a; }
+header { background:white; padding:16px; box-shadow:0 2px 4px rgba(0,0,0,.1); }
+.container { max-width:1100px; margin:auto; padding:20px; }
+nav a { margin-left:15px; text-decoration:none; color:#0f172a; cursor:pointer; }
+.grid { display:grid; grid-template-columns:3fr 1fr; gap:20px; }
+.card { background:white; padding:16px; border-radius:6px; box-shadow:0 2px 4px rgba(0,0,0,.1); margin-bottom:15px; }
+button { padding:8px 12px; border:none; border-radius:4px; cursor:pointer; }
+.btn-edit { background:#facc15; color:white; margin-right:5px; }
+.btn-delete { background:#dc2626; color:white; }
+input, select { padding:8px; width:100%; margin-bottom:10px; }
+.modal { display:none; position:fixed; inset:0; background: rgba(0,0,0,.5); }
+.modal-content { background:white; max-width:500px; margin:10% auto; padding:20px; border-radius:6px; position:relative; }
+.close { position:absolute; right:10px; top:10px; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<header>
+<div class="container" style="display:flex;justify-content:space-between">
+  <h2>Recruiter Dashboard</h2>
+  <nav>
+    <a onclick="showNewJob()">New Job</a>
+    <a onclick="loadJobs()">View Jobs</a>
+  </nav>
+</div>
+</header>
+
+<main class="container" id="mainContent">
+  <!-- List of Jobs -->
+  <div id="jobsList">Loading jobs...</div>
+</main>
+
+<!-- Modal for Add/Edit Job -->
+<div id="jobModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">✖</span>
+    <h3 id="modalTitle">New Job</h3>
+    <input id="jobTitle" placeholder="Job Title" />
+    <input id="jobDesc" placeholder="Description" />
+    <input id="jobCity" placeholder="City" />
+    <select id="jobType">
+      <option value="Full-time">Full-time</option>
+      <option value="Part-time">Part-time</option>
+      <option value="Remote">Remote</option>
+    </select>
+    <button onclick="saveJob()">Save</button>
+  </div>
+</div>
+
+<!-- Modal to show Applicants -->
+<div id="applicantsModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeApplicantsModal()">✖</span>
+    <h3>Applicants</h3>
+    <div id="applicantsList">Loading applicants...</div>
+  </div>
+</div>
+
+<script>
+let jobsData = [];
+let selectedJobId = null;
+
+// ===== Load Jobs =====
+async function loadJobs() {
+  const res = await fetch('http://127.0.0.1:5000/recruiter/jobs');
+  const html = await res.text(); // backend returns HTML template
+  document.getElementById('mainContent').innerHTML = html;
+}
+
+// ===== New Job Modal =====
+function showNewJob() {
+  selectedJobId = null;
+  document.getElementById('modalTitle').innerText = "New Job";
+  document.getElementById('jobTitle').value = '';
+  document.getElementById('jobDesc').value = '';
+  document.getElementById('jobCity').value = '';
+  document.getElementById('jobType').value = 'Full-time';
+  document.getElementById('jobModal').style.display = 'block';
+}
+
+function closeModal() {
+  document.getElementById('jobModal').style.display = 'none';
+}
+
+// ===== Save Job (Add/Edit) =====
+async function saveJob() {
+  const title = document.getElementById('jobTitle').value;
+  const desc = document.getElementById('jobDesc').value;
+  const city = document.getElementById('jobCity').value;
+  const type = document.getElementById('jobType').value;
+
+  if(!title || !desc) { alert('Fill all fields'); return; }
+
+  const url = selectedJobId ? `/recruiter/job/${selectedJobId}/edit` : `/recruiter/job/new`;
+  const method = 'POST';
+  const formData = new FormData();
+  formData.append('title', title);
+  formData.append('description', desc);
+  formData.append('city', city);
+  formData.append('job_type', type);
+
+  await fetch(url, { method, body: formData });
+  closeModal();
+  loadJobs();
+}
+
+// ===== Applicants Modal =====
+async function showApplicants(jobId) {
+  const res = await fetch(`/recruiter/job/${jobId}/applications`);
+  const html = await res.text(); // backend returns HTML template
+  document.getElementById('applicantsList').innerHTML = html;
+  document.getElementById('applicantsModal').style.display = 'block';
+}
+
+function closeApplicantsModal() {
+  document.getElementById('applicantsModal').style.display = 'none';
+}
+</script>
+
+</body>
+</html>
