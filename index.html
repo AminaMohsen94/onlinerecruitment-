@@ -1,151 +1,93 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>HireFlow</title>
-
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f8fafc;
-      color: #0f172a;
-    }
-
-    header {
-      background: white;
-      padding: 16px;
-      box-shadow: 0 2px 4px rgba(0,0,0,.1);
-    }
-
-    .container {
-      max-width: 1100px;
-      margin: auto;
-      padding: 20px;
-    }
-
-    nav a {
-      margin-left: 15px;
-      text-decoration: none;
-      color: #0f172a;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 20px;
-    }
-
-    .card {
-      background: white;
-      padding: 16px;
-      border-radius: 6px;
-      box-shadow: 0 2px 4px rgba(0,0,0,.1);
-      margin-bottom: 15px;
-    }
-
-    .job-title {
-      font-size: 18px;
-      font-weight: bold;
-    }
-
-    button {
-      padding: 8px 12px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .btn-apply {
-      background: #16a34a;
-      color: white;
-    }
-
-    .btn-view {
-      border: 1px solid #cbd5e1;
-      background: white;
-      margin-right: 8px;
-    }
-
-    input {
-      padding: 8px;
-      width: 100%;
-      margin-bottom: 10px;
-    }
-
-    /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.5);
-    }
-
-    .modal-content {
-      background: white;
-      max-width: 500px;
-      margin: 10% auto;
-      padding: 20px;
-      border-radius: 6px;
-      position: relative;
-    }
-
-    .close {
-      position: absolute;
-      right: 10px;
-      top: 10px;
-      cursor: pointer;
-    }
-  </style>
+<meta charset="UTF-8">
+<title>HireFlow</title>
+<style>
+body { margin:0; font-family: Arial,sans-serif; background:#f8fafc; color:#0f172a; }
+header { background:white; padding:16px; box-shadow:0 2px 4px rgba(0,0,0,.1); }
+.container { max-width:1100px; margin:auto; padding:20px; }
+nav a { margin-left:15px; text-decoration:none; color:#0f172a; cursor:pointer; }
+.grid { display:grid; grid-template-columns:2fr 1fr; gap:20px; }
+.card { background:white; padding:16px; border-radius:6px; box-shadow:0 2px 4px rgba(0,0,0,.1); margin-bottom:15px; }
+.job-title { font-size:18px; font-weight:bold; }
+button { padding:8px 12px; border:none; border-radius:4px; cursor:pointer; }
+.btn-apply { background:#16a34a; color:white; }
+.btn-view { border:1px solid #cbd5e1; background:white; margin-right:8px; }
+input { padding:8px; width:100%; margin-bottom:10px; }
+.modal { display:none; position:fixed; inset:0; background: rgba(0,0,0,.5); }
+.modal-content { background:white; max-width:500px; margin:10% auto; padding:20px; border-radius:6px; position:relative; }
+.close { position:absolute; right:10px; top:10px; cursor:pointer; }
+</style>
 </head>
-
 <body>
 
 <header>
-  <div class="container" style="display:flex;justify-content:space-between">
-    <h2>HireFlow</h2>
-    <nav>
-      <a href="#">Jobs</a>
-      <a href="#">Dashboard</a>
-    </nav>
-  </div>
+<div class="container" style="display:flex;justify-content:space-between">
+  <h2>HireFlow</h2>
+  <nav>
+    <a onclick="showLogin()">Login</a>
+    <a onclick="showRegister()">Register</a>
+    <a onclick="showDashboard()">Dashboard</a>
+  </nav>
+</div>
 </header>
 
-<main class="container">
-  <div class="grid">
+<main class="container" id="mainContent">
+<div class="grid">
 
-    <section>
-      <h2>Open Roles</h2>
+  <!-- LEFT: Jobs -->
+  <section>
+    <h2>Open Roles</h2>
+    <input id="searchInput" placeholder="Search jobs..." onkeyup="searchJobs()" />
+    <div id="jobs">Loading jobs...</div>
+  </section>
 
-      <!-- Search -->
-      <input id="searchInput" placeholder="Search jobs..." onkeyup="searchJobs()" />
+  <!-- RIGHT: Auth forms -->
+  <aside class="card">
+    <div id="authForms">
+      <div id="registerForm" style="display:none">
+        <h3>Register</h3>
+        <input id="regName" placeholder="Name" />
+        <input id="regEmail" placeholder="Email" />
+        <input id="regPassword" type="password" placeholder="Password" />
+        <button onclick="register()">Register</button>
+      </div>
 
-      <div id="jobs">Loading jobs...</div>
-    </section>
+      <div id="loginForm" style="display:none">
+        <h3>Login</h3>
+        <input id="loginEmail" placeholder="Email" />
+        <input id="loginPassword" type="password" placeholder="Password" />
+        <button onclick="login()">Login</button>
+      </div>
 
-    <aside class="card">
-      <h3>Saved Searches</h3>
-      <ul>
-        <li>Frontend Engineer - Cairo</li>
-        <li>Backend Engineer - Remote</li>
-      </ul>
-    </aside>
+      <div id="resetForm" style="display:none">
+        <h3>Reset Password</h3>
+        <input id="resetEmail" placeholder="Email" />
+        <button onclick="resetPassword()">Reset</button>
+      </div>
+    </div>
+  </aside>
 
-  </div>
+</div>
 </main>
+
+<!-- Dashboard -->
+<div id="dashboard" style="display:none" class="container">
+  <h2>Dashboard</h2>
+  <div id="userJobs">Loading your applications...</div>
+</div>
 
 <footer style="text-align:center;padding:16px">© HireFlow</footer>
 
-<!-- Modal -->
+<!-- Modal for Apply -->
 <div id="jobModal" class="modal">
   <div class="modal-content">
     <span class="close" onclick="closeModal()">✖</span>
     <h3 id="modalTitle"></h3>
     <p id="modalDescription"></p>
-
     <input id="nameInput" placeholder="Your name" />
     <input id="emailInput" placeholder="Your email" />
-
     <button class="btn-apply" onclick="applyJob()">Apply</button>
   </div>
 </div>
@@ -154,24 +96,21 @@
 let jobsData = [];
 let filteredJobs = [];
 let selectedJobId = null;
+let currentUser = null;
 
+// ===== Load Jobs =====
 async function loadJobs() {
-  const res = await fetch('http://127.0.0.1:5000/api/jobs');
+  const res = await fetch('http://127.0.0.1:5000/api/jobs', { credentials: 'include' });
   jobsData = await res.json();
   filteredJobs = jobsData;
   renderJobs(filteredJobs);
 }
 
-function renderJobs(jobs) {
+function renderJobs(jobs){
   const container = document.getElementById('jobs');
   container.innerHTML = '';
-
-  if (jobs.length === 0) {
-    container.innerHTML = '<p>No jobs found</p>';
-    return;
-  }
-
-  jobs.forEach(j => {
+  if(jobs.length===0){ container.innerHTML='<p>No jobs found</p>'; return; }
+  jobs.forEach(j=>{
     container.innerHTML += `
       <div class="card">
         <div class="job-title">${j.title}</div>
@@ -179,59 +118,112 @@ function renderJobs(jobs) {
         <small>${j.city} • ${j.type}</small><br><br>
         <button class="btn-view" onclick="openModal(${j.id})">View</button>
         <button class="btn-apply" onclick="openModal(${j.id})">Apply</button>
-      </div>
-    `;
+      </div>`;
   });
 }
 
 function searchJobs() {
   const q = searchInput.value.toLowerCase();
-  filteredJobs = jobsData.filter(j =>
-    j.title.toLowerCase().includes(q) ||
-    j.city.toLowerCase().includes(q) ||
-    j.type.toLowerCase().includes(q)
-  );
+  filteredJobs = jobsData.filter(j=>j.title.toLowerCase().includes(q) || j.city.toLowerCase().includes(q) || j.type.toLowerCase().includes(q));
   renderJobs(filteredJobs);
 }
 
-function openModal(id) {
-  const job = jobsData.find(j => j.id === id);
+// ===== Apply Modal =====
+function openModal(id){
+  if(!currentUser){ alert("Login to apply"); return; }
+  const job = jobsData.find(j=>j.id===id);
   selectedJobId = id;
   modalTitle.innerText = job.title;
   modalDescription.innerText = job.description;
-  jobModal.style.display = 'block';
+  nameInput.value = currentUser.name;
+  emailInput.value = currentUser.email;
+  jobModal.style.display='block';
 }
+function closeModal(){ jobModal.style.display='none'; }
 
-function closeModal() {
-  jobModal.style.display = 'none';
-}
-
-async function applyJob() {
-  const name = nameInput.value;
-  const email = emailInput.value;
-
-  if (!name || !email) {
-    alert('Fill all fields');
-    return;
-  }
-
-  await fetch('http://127.0.0.1:5000/api/apply', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      name,
-      email,
-      job_id: selectedJobId
-    })
+async function applyJob(){
+  const name=nameInput.value,email=emailInput.value;
+  if(!name||!email){ alert('Fill all fields'); return; }
+  await fetch('http://127.0.0.1:5000/api/apply',{
+    method:'POST', 
+    headers:{'Content-Type':'application/json'}, 
+    credentials: 'include',
+    body:JSON.stringify({name,email,job_id:selectedJobId})
   });
-
-  alert('Application sent');
-  closeModal();
+  alert('Application sent'); closeModal();
 }
+
+// ===== AUTH UI =====
+function showRegister(){ document.getElementById('registerForm').style.display='block'; document.getElementById('loginForm').style.display='none'; }
+function showLogin(){ document.getElementById('loginForm').style.display='block'; document.getElementById('registerForm').style.display='none'; }
+function showReset(){ document.getElementById('resetForm').style.display='block'; document.getElementById('loginForm').style.display='none'; document.getElementById('registerForm').style.display='none'; }
+
+// ===== AUTH API =====
+async function register(){
+  const name=regName.value,email=regEmail.value,password=regPassword.value;
+  const res=await fetch('http://127.0.0.1:5000/api/register',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    credentials: 'include',
+    body:JSON.stringify({name,email,password})
+  });
+  const data=await res.json(); alert(data.message || data.error);
+}
+
+async function login(){
+  const email=loginEmail.value,password=loginPassword.value;
+  const res=await fetch('http://127.0.0.1:5000/api/login',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    credentials: 'include',
+    body:JSON.stringify({email,password})
+  });
+  const data=await res.json(); 
+  if(data.message){ 
+    currentUser={name:data.name,email:data.email};
+    alert(data.message); 
+  } else { 
+    alert(data.error); 
+  }
+}
+
+async function resetPassword(){
+  const email=resetEmail.value;
+  const res=await fetch('http://127.0.0.1:5000/api/reset_password',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    credentials: 'include',
+    body:JSON.stringify({email})
+  });
+  const data=await res.json(); alert(data.message || data.error);
+}
+
+// ===== Dashboard =====
+function showDashboard() {
+  if(!currentUser){ alert("Login first"); return; }
+  document.getElementById('dashboard').style.display='block';
+  document.getElementById('mainContent').style.display='none';
+  loadUserApplications();
+}
+
+async function loadUserApplications() {
+  const res = await fetch(`http://127.0.0.1:5000/api/my-applications?email=${currentUser.email}`, { credentials: 'include' });
+  const apps = await res.json();
+  const container = document.getElementById('userJobs');
+  container.innerHTML = '';
+  if(apps.length===0){ container.innerHTML='<p>No applications yet</p>'; return; }
+  apps.forEach(a=>{
+    container.innerHTML += `<div class="card"><b>${a.job_title}</b><p>${a.job_description}</p></div>`;
+  });
+}
+
 
 loadJobs();
 </script>
 
 </body>
 </html>
+
+
+
 
