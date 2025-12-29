@@ -1,0 +1,35 @@
+applications:
+  description: "Handles job applications, CV uploads, status updates, notifications"
+  endpoints:
+    apply:
+      method: POST
+      route: /api/apply
+      request:
+        body:
+          name: string
+          email: string
+          job_id: int
+          cv_file: file (optional)
+      response:
+        success: "Application submitted successfully"
+        error:
+          missing_fields: "name, email, or job_id required"
+    view_applicants:
+      method: GET
+      route: /recruiter/job/{job_id}/applications
+      response:
+        applications:
+          - id: int
+            name: string
+            email: string
+            status: string
+            notes: string
+    update_application:
+      method: POST
+      route: /recruiter/application/{app_id}/update
+      request:
+        body:
+          status: string
+          notes: string
+      response:
+        success: "Application updated successfully"

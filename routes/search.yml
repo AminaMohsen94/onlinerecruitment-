@@ -1,0 +1,25 @@
+search:
+  description: "Search for jobs and candidates"
+  endpoints:
+    jobs:
+      method: GET
+      route: /api/search/jobs
+      params:
+        q: string
+      response:
+        jobs:
+          - id: int
+            title: string
+            description: string
+            city: string
+            type: string
+    candidates:
+      method: GET
+      route: /api/search/candidates
+      params:
+        q: string
+      response:
+        candidates:
+          - id: int
+            name: string
+            job: string

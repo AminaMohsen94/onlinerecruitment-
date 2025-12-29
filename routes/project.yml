@@ -1,0 +1,152 @@
+online_recruitment_system:
+  description: "Comprehensive Online Recruitment Platform backend API documentation"
+  
+  auth:
+    description: "User authentication and session management"
+    endpoints:
+      register:
+        method: POST
+        route: /api/register
+        request_body:
+          name: string
+          email: string
+          password: string
+        response:
+          success: 
+            message: "Registered successfully"
+          error:
+            email_exists: "Email already exists"
+      login:
+        method: POST
+        route: /api/login
+        request_body:
+          email: string
+          password: string
+        response:
+          success:
+            message: "Login successful"
+            user:
+              name: string
+              email: string
+          error:
+            invalid_credentials: "Invalid credentials"
+      logout:
+        method: POST
+        route: /api/logout
+        response:
+          success: "Logged out successfully"
+  
+  jobs:
+    description: "Job management"
+    endpoints:
+      list_jobs:
+        method: GET
+        route: /api/jobs
+        response:
+          jobs:
+            - id: int
+              title: string
+              description: string
+              city: string
+              type: string
+      create_job:
+        method: POST
+        route: /api/jobs
+        request_body:
+          title: string
+          description: string
+          city: string
+          type: string
+        response:
+          success: "Job created successfully"
+      edit_job:
+        method: PUT
+        route: /api/jobs/{job_id}
+        request_body:
+          title: string
+          description: string
+          city: string
+          type: string
+        response:
+          success: "Job updated successfully"
+      delete_job:
+        method: DELETE
+        route: /api/jobs/{job_id}
+        response:
+          success: "Job deleted successfully"
+
+  applications:
+    description: "Job application handling, CV upload, status updates"
+    endpoints:
+      apply:
+        method: POST
+        route: /api/apply
+        request_body:
+          name: string
+          email: string
+          job_id: int
+          cv_file: file (optional)
+        response:
+          success: "Application submitted successfully"
+          error:
+            missing_fields: "name, email, or job_id required"
+      view_applicants:
+        method: GET
+        route: /recruiter/job/{job_id}/applications
+        response:
+          applications:
+            - id: int
+              name: string
+              email: string
+              status: string
+              notes: string
+      update_application:
+        method: POST
+        route: /recruiter/application/{app_id}/update
+        request_body:
+          status: string
+          notes: string
+        response:
+          success: "Application updated successfully"
+
+  recruiter:
+    description: "Recruiter dashboard: manage jobs, view applicants, download CVs"
+    endpoints:
+      dashboard:
+        method: GET
+        route: /recruiter/dashboard
+        response:
+          stats:
+            total_jobs: int
+            total_applications: int
+      download_cv:
+        method: GET
+        route: /recruiter/application/{app_id}/download
+        response:
+          file: "Binary CV file"
+
+  search:
+    description: "Search for jobs or candidates"
+    endpoints:
+      jobs:
+        method: GET
+        route: /api/search/jobs
+        query_params:
+          q: string
+        response:
+          jobs:
+            - id: int
+              title: string
+              description: string
+              city: string
+              type: string
+      candidates:
+        method: GET
+        route: /api/search/candidates
+        query_params:
+          q: string
+        response:
+          candidates:
+            - id: int
+              name: string
+              job: string

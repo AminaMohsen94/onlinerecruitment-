@@ -8,7 +8,7 @@
             "type": "chrome",
             "request": "launch",
             "name": "Open index.html",
-            "file": "d:\\Users\\roaya\\Desktop\\OnlineRecruitment\\index.html",
+            "file": "d:\\Users\\roaya\\Desktop\\OnlineRecruitment\\index.html"
         },
         {
             "type": "chrome",

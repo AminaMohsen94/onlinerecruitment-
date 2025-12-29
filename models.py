@@ -16,6 +16,7 @@ class Job(db.Model):
     description = db.Column(db.Text, nullable=False)
     city = db.Column(db.String(50), nullable=False)
     job_type = db.Column(db.String(50), nullable=False)
+    applications = db.relationship("Application", backref="job")
 
 class Application(db.Model):
     id = db.Column(db.Integer, primary_key=True)

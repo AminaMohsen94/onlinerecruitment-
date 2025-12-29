@@ -1,0 +1,40 @@
+jobs:
+  description: "Manage jobs: create, edit, delete, list, search"
+  endpoints:
+    list_jobs:
+      method: GET
+      route: /api/jobs
+      response:
+        jobs:
+          - id: int
+            title: string
+            description: string
+            city: string
+            type: string
+    create_job:
+      method: POST
+      route: /api/jobs
+      request:
+        body:
+          title: string
+          description: string
+          city: string
+          type: string
+      response:
+        success: "Job created successfully"
+    edit_job:
+      method: PUT
+      route: /api/jobs/{job_id}
+      request:
+        body:
+          title: string
+          description: string
+          city: string
+          type: string
+      response:
+        success: "Job updated successfully"
+    delete_job:
+      method: DELETE
+      route: /api/jobs/{job_id}
+      response:
+        success: "Job deleted successfully"

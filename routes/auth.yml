@@ -1,0 +1,36 @@
+auth:
+  description: "Handles user registration, login, logout, and session management"
+  endpoints:
+    register:
+      method: POST
+      route: /api/register
+      request:
+        body:
+          name: string
+          email: string
+          password: string
+      response:
+        success:
+          message: "Registered successfully"
+        error:
+          email_exists: "Email already exists"
+    login:
+      method: POST
+      route: /api/login
+      request:
+        body:
+          email: string
+          password: string
+      response:
+        success:
+          message: "Login successful"
+          user:
+            name: string
+            email: string
+        error:
+          invalid_credentials: "Invalid credentials"
+    logout:
+      method: POST
+      route: /api/logout
+      response:
+        success: "Logged out successfully"

@@ -1,0 +1,15 @@
+recruiter:
+  description: "Dashboard for recruiters to manage jobs, view applicants, download CVs"
+  endpoints:
+    dashboard:
+      method: GET
+      route: /recruiter/dashboard
+      response:
+        stats:
+          total_jobs: int
+          total_applications: int
+    download_cv:
+      method: GET
+      route: /recruiter/application/{app_id}/download
+      response:
+        file: "Binary CV file"

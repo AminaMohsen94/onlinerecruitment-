@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>HireFlow</title>
+<style>
+body { font-family: Arial, sans-serif; margin:0; background:#f8fafc; color:#0f172a; }
+header { background:white; padding:16px; box-shadow:0 2px 4px rgba(0,0,0,.1); }
+.container { max-width:1100px; margin:auto; padding:20px; }
+nav a { margin-left:15px; text-decoration:none; color:#0f172a; }
+.grid { display:grid; grid-template-columns:2fr 1fr; gap:20px; }
+.card { background:white; padding:16px; border-radius:6px; box-shadow:0 2px 4px rgba(0,0,0,.1); margin-bottom:15px; }
+.job-title { font-size:18px; font-weight:bold; }
+button { padding:8px 12px; border:none; border-radius:4px; cursor:pointer; }
+.btn-apply { background:#16a34a; color:white; }
+.btn-view { border:1px solid #cbd5e1; background:white; margin-right:8px; }
+input { padding:8px; width:100%; margin-bottom:10px; }
+.modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); }
+.modal-content { background:white; max-width:500px; margin:10% auto; padding:20px; border-radius:6px; position:relative; }
+.close { position:absolute; right:10px; top:10px; cursor:pointer; }
+</style>
+</head>
+<body>
+
+<header>
+<div class="container" style="display:flex;justify-content:space-between">
+<h2>HireFlow</h2>
+<nav>
+<a href="#">Jobs</a>
+<a href="#">Dashboard</a>
+</nav>
+</div>
+</header>
+
+<main class="container">
+<div class="grid">
+
+<section>
+<h2>Open Roles</h2>
+<input id="searchInput" placeholder="Search jobs..." />
+<div id="jobs">Loading jobs...</div>
+</section>
+
+<aside class="card">
+<h3>Saved Searches</h3>
+<ul id="savedSearches">
+<li>Frontend Engineer - Cairo</li>
+<li>Backend Engineer - Remote</li>
+</ul>
+</aside>
+
+</div>
+</main>
+
+<footer style="text-align:center;padding:16px">© HireFlow</footer>
+
+<!-- Modal -->
+<div id="jobModal" class="modal">
+<div class="modal-content">
+<span class="close" onclick="closeModal()">✖</span>
+<h3 id="modalTitle"></h3>
+<p id="modalDescription"></p>
+<input id="nameInput" placeholder="Your name" />
+<input id="emailInput" placeholder="Your email" />
+<button class="btn-apply" onclick="applyJob()">Apply</button>
+</div>
+</div>
+
+<script>
+let jobsData = [];
+let filteredJobs = [];
+let selectedJobId = null;
+
+async function loadJobs() {
+    const res = await fetch('/api/jobs/');
+    jobsData = await res.json();
+    filteredJobs = jobsData;
+    renderJobs(filteredJobs);
+}
+
+function renderJobs(jobs) {
+    const container = document.getElementById('jobs');
+    container.innerHTML = '';
+    if(jobs.length === 0) { container.innerHTML='<p>No jobs found</p>'; return; }
+    jobs.forEach(j => {
+        container.innerHTML += `
+        <div class="card">
+        <div class="job-title">${j.title}</div>
+        <p>${j.description}</p>
+        <small>${j.city} • ${j.type}</small><br><br>
+        <button class="btn-view" onclick="openModal(${j.id})">View</button>
+        <button class="btn-apply" onclick="openModal(${j.id})">Apply</button>
+        </div>`;
+    });
+}
+
+document.getElementById('searchInput').addEventListener('keyup', async (e)=>{
+    const q = e.target.value.toLowerCase();
+    const res = await fetch(`/api/search/jobs?q=${encodeURIComponent(q)}`);
+    filteredJobs = await res.json();
+    renderJobs(filteredJobs);
+});
+
+function openModal(id){
+    const job = jobsData.find(j=>j.id===id);
+    selectedJobId=id;
+    document.getElementById('modalTitle').innerText=job.title;
+    document.getElementById('modalDescription').innerText=job.description;
+    document.getElementById('jobModal').style.display='block';
+}
+
+function closeModal(){
+    document.getElementById('jobModal').style.display='none';
+}
+
+async function applyJob(){
+    const name = document.getElementById('nameInput').value;
+    const email = document.getElementById('emailInput').value;
+    if(!name || !email){ alert('Fill all fields'); return; }
+    const res = await fetch('/api/applications/', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({name,email,job_id:selectedJobId})
+    });
+    const data = await res.json();
+    alert(data.message);
+    closeModal();
+}
+
+loadJobs();
+</script>
+
+</body>
+</html>
+
+
